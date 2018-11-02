@@ -1,0 +1,4 @@
+var sets = [
+         {"sets": [0], "label": "Strategy", "size": 70000},
+         {"sets": [1], "label": "Thom Yorke", "size": 70000},
+         {"sets": [2], "label": "John Lennon", "size": 70000}];

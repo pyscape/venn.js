@@ -1,0 +1,50 @@
+<svg width="500" height="500">
+    <g filter="url(#dropshadowfilter)">
+        <path d="
+            M 166.29151005572368 322.49367880417753 
+            m -151.29151005572368 0 
+            a 151.29151005572368 151.29151005572368 0 1 0 302.58302011144735 0 
+            a 151.29151005572368 151.29151005572368 0 1 0 -302.58302011144735 0" id="arcArea_0" style="fill-opacity: 1; fill: rgb(0, 0, 0); stroke-opacity: 1.6875e-09; stroke: rgb(0, 0, 0); stroke-width: 3;">
+
+        </path>
+        <path d="
+            M 333.7084899442764 322.49367880417753 
+            m -151.29151005572368 0 
+            a 151.29151005572368 151.29151005572368 0 1 0 302.58302011144735 0 
+            a 151.29151005572368 151.29151005572368 0 1 0 -302.58302011144735 0" id="arcArea_3" style="fill-opacity: 1; fill: rgb(0, 0, 0); stroke-opacity: 0; stroke: rgb(0, 0, 0); stroke-width: 3;">
+
+        </path>
+        <path d="
+            M 250 177.5063211958225 
+            m -151.29151005572368 0 
+            a 151.29151005572368 151.29151005572368 0 1 0 302.58302011144735 0 
+            a 151.29151005572368 151.29151005572368 0 1 0 -302.58302011144735 0" id="arcArea_5" style="fill-opacity: 1; fill: rgb(0, 0, 0; stroke-opacity: 0; stroke: rgb(0, 0, 0); stroke-width: 3;">
+
+        </path>
+    </g>
+    <defs>
+        <filter id="dropshadowfilter">
+
+        <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur">
+
+        </feGaussianBlur>
+
+        <feOffset in="blur" dx="5" dy="5" result="offsetBlur">
+
+        </feOffset>
+
+        <feMerge>
+
+        <feMergeNode in="offsetBlur">
+
+        </feMergeNode>
+
+        <feMergeNode in="SourceGraphic">
+
+        </feMergeNode>
+
+        </feMerge>
+
+        </filter>
+    </defs>
+</svg>

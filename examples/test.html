@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Intersection Tooltip venn.js example</title>
+<style>
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+    <div id="venn"></div>
+<svg width="391" height="400">
+  <defs>
+    <!-- define the shapes in the image, which we will use for the outlines
+         and for creating intersection masks -->
+    <rect id="square" x="92" y="48" width="218" height="218"/>
+    <polygon id="triangle" points="54,366 277,366 165,142"/>
+    <circle id="circle" cx="256" cy="264" r="85"/>
+    
+    <!-- the masks -->
+    <!-- white parts are visible, black parts are invisible -->
+    <mask id="square-minus-triangle">
+      <!-- square with triangle cut out of it -->
+      <use xlink:href="#square" fill="white"/>
+      <use xlink:href="#triangle" fill="black"/>
+    </mask>
+    <mask id="triangle-minus-square">
+      <!-- triangle with square cut out of it -->
+      <use xlink:href="#triangle" fill="white"/>
+      <use xlink:href="#square" fill="black"/>
+    </mask>
+  </defs>
+  
+  <!-- background -->
+  <rect width="100%" height="100%" fill="#e5e4da"/>
+  
+  <!-- the intersection shapes (yellow) -->
+  <!-- first draw the circle, but use the square-minus-triangle mask.-->
+  <use xlink:href="#circle" fill="#e4e400" mask="url(#square-minus-triangle)"/>
+  <!-- draw the circle again, but use the triangle-minus-square mask.-->
+  <use xlink:href="#circle" fill="#e4e400" mask="url(#triangle-minus-square)"/>
+  
+  <!-- draw the outlined shapes -->
+  <g fill="none" stroke="black" stroke-width="6">
+    <use xlink:href="#square"/>
+    <use xlink:href="#triangle"/>
+    <use xlink:href="#circle"/>
+  </g>
+</svg>
+</body>
+
+<style>
+.venntooltip {
+  position: absolute;
+  text-align: center;
+  width: 128px;
+  height: 16px;
+  background: #333;
+  color: #ddd;
+  padding: 2px;
+  border: 0px;
+  border-radius: 8px;
+  opacity: 0;
+}
+</style>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="../venn.js"></script>
+
+<script>
+const chart = venn.VennDiagram()
+                 .width(500)
+                 .height(500);
+const sets = [
+    {"sets": [0], "label": " ", "size": 3},
+    {"sets": [0,1], "size": 1},
+    {"sets": [0,2], "size": 1},
+    {"sets": [1], "label": " ", "size": 3},
+    {"sets": [1,2], "size": 1},
+    {"sets": [2], "label": " ", "size": 3}
+];
+
+const labels = ['ANALYTICS', '', '', 'TECHNOLOGY', '', 'STRATEGY'];
+const colors = ['#A1A2A7', '#886C2D', '#886C2D', '#72B2E2', '#72B2E2', '#C6972D'];
+
+
+const arcLetterSpacing = (i) => {
+    switch(i) {
+        case 5: // Strategy
+            return "2px";
+        break;
+        case 3: // Technology
+            return "6px";
+        break;
+        case 0: // Analytics
+            return "6px";
+        break;
+    }
+    return "2px";
+}
+
+const arcAreaRef = (i) => "#" + arcAreaId({},i);
+const arcAreaId = (d,i) => "arcArea_" + i;
+
+const arcSectionRef = (d,i) => "#" + arcSectionId(d,i);
+const arcSectionId = (d,i) => "arcSection_" + i;
+
+const arcLabel = (d,i) => {
+    return labels[i];
+}
+
+const arcLabelFull = (d,i,n) => {
+    let arc = "";
+    switch(i) {
+        case 5: // Strategy
+            arc = "M135,190 A10,10 0 0,1 365,190";
+            break;
+        case 3: // Technology
+            arc = "M280,425 A10,10 0 0,0 395,220";
+            break;
+        case 0: // Analytics
+            arc = "M105,220 A10,10 0 0,0 230,425";
+            break;
+        default:
+            return;
+    }
+    let selection = d3.select(n[i]);
+    selection
+        .append("path")
+            .attr("id", arcSectionId(d,i))
+            .attr("d", arc)
+            .style("fill", "none")
+            .style("stroke", "red")
+            .style("stroke-dasharray", "5,5");
+    selection
+        .append("text")
+        .style("text-anchor","middle")
+            .append("textPath")
+                .attr("xlink:href", arcSectionRef(d,i))
+                .style("font-size", "2.7em")
+                .style("font-weight", 400)
+                .style("fill", "white")
+                .attr("startOffset", "50%")
+                .attr("letter-spacing", arcLetterSpacing(i))
+                .text(arcLabel(d,i));
+}
+
+const div = d3.select("#venn")
+div.datum(sets).call(chart);
+const tooltip = d3.select("body").append("div")
+    .attr("class", "venntooltip");
+
+const svg = d3.select("#venn svg");
+const defs = svg.append("defs");
+
+div.selectAll("path")
+    .attr("id", arcAreaId)
+    .style("stroke-opacity", 0)
+    .style("stroke", "#fff")
+    .style("stroke-width", 3)
+    .style("fill", (d,i) => (colors[i]) ? colors[i] : "none");
+
+div.selectAll("g")
+    .each(arcLabelFull)
+    .on("mouseover", function(d, i) {
+        if(d.size === 3) {
+            //venn.sortAreas(div, d);
+            //tooltip.transition().duration(400).style("opacity", .9);
+            tooltip.text(d.size + " users");
+            d3.select(this).transition("tooltip").duration(400).select("path")
+                //.style("fill-opacity", d.sets.length == 1 ? .95 : .1)
+                .style("stroke-opacity", 1);
+        }
+    })
+    .on("mousemove", function() {
+        tooltip.style("left", (d3.event.pageX) + "px")
+               .style("top", (d3.event.pageY - 28) + "px");
+    })
+    .on("mouseout", function(d, i) {
+        //tooltip.transition().duration(400).style("opacity", 0);
+        d3.select(this).transition("tooltip").duration(400).select("path")
+            //.style("fill-opacity", d.sets.length == 1 ? .55 : .0)
+            .style("stroke-opacity", 0);
+    });
+
+// Apply dropshadow
+const areas = d3.selectAll("#venn g")
+
+
+const filter = defs.append("filter")
+    .attr("id", "dropshadowfilter");
+filter.append("feGaussianBlur")
+    .attr("in", "SourceAlpha")
+    .attr("stdDeviation", 4)
+    .attr("result", "blur");
+filter.append("feOffset")
+    .attr("in", "blur")
+    .attr("dx", 5)
+    .attr("dy", 5)
+    .attr("result", "offsetBlur");
+
+const feMerge = filter.append("feMerge");
+feMerge.append("feMergeNode")
+    .attr("in", "offsetBlur")
+feMerge.append("feMergeNode")
+    .attr("in", "SourceGraphic");
+areas.attr("filter", "url(#dropshadowfilter)");
+
+/*
+const group = d3.select("#venn-overlay").append("svg");
+
+group.append("g")
+    .attr("fill", "black")
+    .attr("stroke", "black")
+    .attr("stroke-width", "6");
+group.append("use")
+        .attr("xlink:href", arcAreaRef(5))
+group.append("use")
+        .attr("xlink:href", arcAreaRef(3))
+group.append("use")
+        .attr("xlink:href", arcAreaRef(0))
+*/
+
+//const svg2 = svg.insert("svg",":first-child")
+const svg2 = div.append("svg",":first-child")
+    .attr("width", "500")
+    .attr("height","500");
+;
+const defs2 = svg2.append("defs");
+
+const clone = (selector, id) => {
+    var result = node.cloneNode(false);
+    result.attr("id", id);
+    return result;
+}
+
+let rightGroup = defs2.append('rect')
+    .attr("id", "square")
+    .attr("x", "92")
+    .attr("y", "48")
+    .attr('width','218')
+    .attr('height','218')
+let leftGroup = defs2.append('polygon')
+    .attr("id", "triangle")
+    .attr("points", "54,366 277,366 165,142")
+let centerGroup = defs2.append('circle')
+    .attr("id", "circle")
+    .attr("cx", "256")
+    .attr("cy", "264")
+    .attr("r", "85");
+
+    
+let cGroup2 = defs.append(d3.select(arcAreaRef(2)).node());
+debugger;
+
+/*
+defs.append("path")
+    .attr("xlink:href", arcAreaRef(1))
+    .attr("id", "arcPath_1");
+defs.append("path")
+    .attr("xlink:href", arcAreaRef(2))
+    .attr("id", "arcPath_2");
+defs.append("path")
+    .attr("xlink:href", arcAreaRef(4))
+    .attr("id", "arcPath_4");
+
+*/
+
+
+/*
+let squareMinusTriangle = defs2.append('mask')
+    .attr("id", "square-minus-triangle");
+squareMinusTriangle.append('use')
+    .attr("xlink:href", "#square")
+    .attr("fill", "white");
+squareMinusTriangle.append('use')
+    .attr("xlink:href", "#triangle")
+    .attr("fill", "black");
+*/
+
+let triangleMinusSquare = defs2.append('mask')
+    .attr("id", "triangle-minus-square");
+triangleMinusSquare.append('use')
+    .attr("xlink:href", "#triangle")
+    .attr("fill", "white");
+triangleMinusSquare.append('use')
+    .attr("xlink:href", "#square")
+    .attr("fill", "black");
+
+let cGroup = defs.append('mask')
+    .attr("id", "1_2_4");
+cGroup.append("use")
+    .attr("xlink:href", arcAreaRef(2))
+    .attr("fill","black");
+cGroup.append("use")
+    .attr("xlink:href", arcAreaRef(4))
+    .attr("fill","red");
+
+/*
+svg2.append("use")
+    .attr("xlink:href", "#circle")
+    .attr("fill", "yellow")
+    .attr("mask", "url(#square-minus-triangle)")
+*/
+
+svg2.append("use")
+    .attr("xlink:href", "#circle")
+    .attr("fill", "yellow")
+    .attr("mask", "url(#triangle-minus-square)")
+
+svg2.append("use")
+    .attr("xlink:href", arcAreaRef(1))
+    .attr("fill", "pink")
+    .attr("mask", "url(#1_2_4)")
+
+/*
+let render = svg2.append("g")
+    .attr("fill", "none")
+    .attr("stroke", "black")
+    .attr("stroke-width", "6");
+
+render.append("use")
+    .attr("xlink:href", "#square")
+render.append("use")
+    .attr("xlink:href", "#triangle")
+render.append("use")
+    .attr("xlink:href", "#circle")
+*/
+ 
+
+/*
+let rightGroup = defs2.append('mask')
+    .attr("id", "5_3");
+rightGroup.append("use")
+    .attr("xlink:href", arcAreaRef(5))
+    .attr("fill","pink");
+rightGroup.append("use")
+    .attr("xlink:href", arcAreaRef(3))
+    .attr("fill","brown");
+
+let bottomGroup = defs2.append('mask')
+    .attr("id", "0_3");
+bottomGroup.append("use")
+    .attr("xlink:href", arcAreaRef(0))
+    .attr("fill","yellow");
+bottomGroup.append("use")
+    .attr("xlink:href", arcAreaRef(3))
+    .attr("fill","orange");
+
+let leftGroup = defs2.append('mask')
+    .attr("id", "5_0");
+leftGroup.append("use")
+    .attr("xlink:href", arcAreaRef(0))
+    .attr("fill","green");
+leftGroup.append("use")
+    .attr("xlink:href", arcAreaRef(5))
+    .attr("fill","blue");
+
+let centerGroup = defs2.append('mask')
+    .attr("id", "1_2_4");
+centerGroup.append("use")
+    .attr("xlink:href", arcAreaRef(1))
+    .attr("fill","white");
+centerGroup.append("use")
+    .attr("xlink:href", arcAreaRef(2))
+    .attr("fill","black");
+centerGroup.append("use")
+    .attr("xlink:href", arcAreaRef(4))
+    .attr("fill","red");
+
+svg2.append("use")
+    .attr("xlink:href", arcAreaRef(1))
+    .attr("fill", "pink")
+    .attr("opacity", "1")
+    .attr("fill-opacity", "1")
+    .attr("stroke-opacity", "1")
+    //.attr("mask", "url(#1_2_4)")
+svg2.append("g")
+    .attr("fill", "brown")
+    .attr("stroke", "pink")
+    .attr("stroke-width", "6")
+    .append("use")
+        .attr("xlink:href", arcAreaRef(1))
+        .attr("stroke", "pink")
+        .attr("fill-opacity", "1")
+        .attr("stroke-opacity", "1")
+ 
+*/
+</script>
+</html>

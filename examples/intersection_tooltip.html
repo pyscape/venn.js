@@ -32,52 +32,217 @@ body {
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="../venn.js"></script>
-<script src="./lastfm.jsonp"></script>
 
 <script>
+var allData = [
+    {"sets": [0], "label": " ", "size": 3},
+    {"sets": [0,1], "size": 1},
+    {"sets": [0,2], "size": 1},
+    {"sets": [1], "label": " ", "size": 3},
+    {"sets": [1,2], "size": 1},
+    {"sets": [2], "label": " ", "size": 3}
+];
 
 var chart = venn.VennDiagram()
-                 .width(500)
-                 .height(500);
+    .width(500)
+    .height(500);
 
-var div = d3.select("#venn")
-div.datum(sets).call(chart);
+var div = d3.select("#venn");
+div.datum(allData).call(chart);
 
 var tooltip = d3.select("body").append("div")
     .attr("class", "venntooltip");
 
-div.selectAll("path")
+
+const labels = ['ANALYTICS', '', '', 'TECHNOLOGY', '', 'STRATEGY'];
+const colors = ['#A1A2A7', '#A1A2A7', '#A1A2A7', '#72B2E2', '#72B2E2', '#C6972D'];
+
+const arcId = (d,i) => "arcSection_" + i;
+const curRef = "";
+const arcRef = (d,i) => "#" + arcId(d,i);
+const arcPercent = (d,i) => {
+    switch(i) {
+        case 5:
+            return "0%";
+        break;
+        case 3:
+            return "40%";
+        break;
+        case 0:
+            return "10%";
+        break;
+
+    }
+    return "0%";
+}
+
+const arcLetterSpacing = (i) => {
+    switch(i) {
+        case 5:
+            return "2px";
+        break;
+        case 3:
+            return "6px";
+        break;
+        case 0:
+            return "6px";
+        break;
+
+    }
+    return "2px";
+
+}
+
+const arcLabelFull = (d,i,n) => {
+    let arc = "";
+    switch(i) {
+        case 5:
+            arc = "M135,190 A10,10 0 0,1 365,190";
+            break;
+        case 3:
+            arc = "M280,425 A10,10 0 0,0 395,220";
+            break;
+        case 0:
+            arc = "M105,220 A10,10 0 0,0 230,425";
+            break;
+        default:
+            return;
+    }
+    let selection = d3.select(n[i]);
+    selection
+        .append("path")
+            .attr("id", arcId(d,i))
+            .attr("d", arc)
+            .style("fill", "none");
+    /*
+            .style("stroke", "red")
+            .style("stroke-dasharray", "5,5");
+    */
+    selection
+        .append("text")
+        .style("text-anchor","middle")
+            .append("textPath")
+                .attr("xlink:href", arcRef(d,i))
+                .style("font-size", "2em")
+                .style("font-weight", "bold")
+                .style("fill", "white")
+                .attr("startOffset", "50%")
+                .attr("letter-spacing", arcLetterSpacing(i))
+                .text(arcLabel(d,i));
+}
+const arcLabel = (d,i) => {
+    return labels[i];
+}
+
+const groups = div.selectAll("g")
+    .style("text-align", "center")
+
+let paths = div.selectAll("path")
     .style("stroke-opacity", 0)
-    .style("stroke", "#fff")
-    .style("stroke-width", 3)
+    .style("fill-opacity", 0.65)
+    .style("fill", (d,i) => (colors[i]) ? colors[i] : "none")
+;
+/*
+*/
+
+
+var transition = (ctx, color) => {
+    tooltip.transition().duration(400)
+        .style("opacity", 1)
+        .style("fill", colors[color]);
+    tooltip.text(" users");
+}
+
+const vennMouseOut = (d, i) => {
+    tooltip.transition().duration(400).style("opacity", 0);
+    var selection = d3.select(div.selectAll("g")._groups[0][i]).transition("tooltip").duration(400);
+    var leng = (d.sets.length === 1) ? .25 : 0;
+    selection.select("path")
+        .style("fill-opacity", leng)
+        .style("stroke-opacity", 0);
+}
+const vennMouseOver = (d, i) => {
+    // sort all the areas relative to the current item
+    venn.sortAreas(div, d);
+    // Display a tooltip with the current size
+    tooltip.transition().duration(400).style("opacity", .9);
+    tooltip.text(d.size + " users");
+    // highlight the current path
+    var selection = d3.select(div.selectAll("g")._groups[0][i]).transition("tooltip").duration(400);
+    selection.select("path")
+        .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
+        .style("stroke-opacity", 1);
+}
 
 div.selectAll("g")
-    .on("mouseover", function(d, i) {
-        // sort all the areas relative to the current item
-        venn.sortAreas(div, d);
-
-        // Display a tooltip with the current size
-        tooltip.transition().duration(400).style("opacity", .9);
-        tooltip.text(d.size + " users");
-
-        // highlight the current path
-        var selection = d3.select(this).transition("tooltip").duration(400);
-        selection.select("path")
-            .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
-            .style("stroke-opacity", 1);
-    })
-
+    .each(arcLabelFull)
+    .on("mouseover", vennMouseOver)
     .on("mousemove", function() {
         tooltip.style("left", (d3.event.pageX) + "px")
                .style("top", (d3.event.pageY - 28) + "px");
     })
+    .on("mouseout", vennMouseOut);
 
-    .on("mouseout", function(d, i) {
-        tooltip.transition().duration(400).style("opacity", 0);
-        var selection = d3.select(this).transition("tooltip").duration(400);
-        selection.select("path")
-            .style("fill-opacity", d.sets.length == 1 ? .25 : .0)
-            .style("stroke-opacity", 0);
-    });
-</script>
+var areas = d3.selectAll("#venn g")
+
+const svg = d3.select("#venn svg");
+var defs = svg.append("defs");
+
+// from http://stackoverflow.com/questions/12277776/how-to-add-drop-shadow-to-d3-js-pie-or-donut-chart
+var filter = defs.append("filter")
+    .attr("id", "dropshadowfilter")
+
+filter.append("feGaussianBlur")
+    .attr("in", "SourceAlpha")
+    .attr("stdDeviation", 4)
+    .attr("result", "blur");
+filter.append("feOffset")
+    .attr("in", "blur")
+    .attr("dx", 10)
+    .attr("dy", 15)
+    .attr("result", "offsetBlur");
+
+var feMerge = filter.append("feMerge");
+
+feMerge.append("feMergeNode")
+    .attr("in", "offsetBlur")
+feMerge.append("feMergeNode")
+    .attr("in", "SourceGraphic");
+
+areas.attr("filter", "url(#dropshadowfilter)");
+
+
+
+
+/*
+
+div.selectAll("text")
+    .style("text-anchor", "end")
+    .append("textPath")
+        .attr("xlink:href", arcRef)
+        .style("fill", "black")
+        .style("font-size", "2em")
+        .style("text-anchor","middle")
+        .attr("transform", "rotate(90)")
+        .attr("startOffset", arcPercent)
+
+*/
+/*
+svg.append("path")
+			.attr("id", "wavy") //A unique ID to reference later
+			.attr("d", "M135,190 A10,10 0 0,1 365,190") //"M120,100 A101,101 0 0,1 200,200") //Notation for an SVG path
+			.style("fill", "none")
+			.style("stroke", "#AAAAAA")
+			.style("stroke-dasharray", "5,5");
+svg.append("text")
+			.style("text-anchor","middle")
+		  .append("textPath")				//append a textPath to the text element
+			.attr("xlink:href", "#wavy") 	//place the ID of the path here
+            .style("font-size", "2em")
+            .style("fill", "black")
+			.attr("startOffset", "50%")		//place the text halfway on the arc
+			.text("STRATEGY");
+*/
+
+    </script>
 </html>

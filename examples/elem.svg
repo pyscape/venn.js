@@ -1,0 +1,40 @@
+<svg width="391" height="400">
+  <defs>
+    <!-- define the shapes in the image, which we will use for the outlines
+         and for creating intersection masks -->
+    <rect id="square" x="92" y="48" width="218" height="218"/>
+    <polygon id="triangle" points="54,366 277,366 165,142"/>
+    <circle id="circle" cx="256" cy="264" r="85"/>
+    
+    <!-- the masks -->
+    <!-- white parts are visible, black parts are invisible -->
+    <mask id="square-minus-triangle">
+      <!-- square with triangle cut out of it -->
+      <use xlink:href="#square" fill="white"/>
+      <use xlink:href="#triangle" fill="black"/>
+    </mask>
+    <mask id="triangle-minus-square">
+      <!-- triangle with square cut out of it -->
+      <use xlink:href="#triangle" fill="white"/>
+      <use xlink:href="#square" fill="black"/>
+    </mask>
+  </defs>
+  
+  <!-- background -->
+  <rect width="100%" height="100%" fill="#e5e4da"/>
+  
+  <!-- the intersection shapes (yellow) -->
+  <!-- first draw the circle, but use the square-minus-triangle mask.-->
+  <use xlink:href="#circle" fill="#e4e400" mask="url(#square-minus-triangle)"/>
+  <!-- draw the circle again, but use the triangle-minus-square mask.-->
+  <use xlink:href="#circle" fill="#e4e400" mask="url(#triangle-minus-square)"/>
+  
+  <!-- draw the outlined shapes -->
+  <g fill="none" stroke="black" stroke-width="6">
+    <use xlink:href="#square"/>
+    <use xlink:href="#triangle"/>
+    <use xlink:href="#circle"/>
+  </g>
+</svg>
+// brown
+

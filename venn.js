@@ -1389,7 +1389,7 @@
                 enterPath.style("fill-opacity", "0")
                     .filter(function (d) { return d.sets.length == 1; } )
                     .style("fill", function(d) { return colours(d.sets); })
-                    .style("fill-opacity", ".25");
+                    .style("fill-opacity", "1");
 
                 enterText
                     .style("fill", function(d) { return d.sets.length == 1 ? colours(d.sets) : "#444"; });
