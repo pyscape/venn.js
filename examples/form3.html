@@ -2,49 +2,42 @@
     <div id="et-pb-contact-message" class="et-pb-contact-message et_pb_text et_pb_module et_pb_bg_layout_light et_pb_text_align_left et_pb_text_2"></div>
     <div class="et_pb_contact">
         <form id="scottForm" name="0.1_insightly_web_to_lead" class="et_pb_contact_form clearfix">
-
             <p class="et_pb_contact_field et_pb_contact_field_0 et_pb_contact_field_half" data-id="title" data-type="input">
                 <label for="Title" class="et_pb_contact_form_label">
                     Title
                 </label>
                 <input type="text" value="" id="insightly_Title" name="Title" placeholder="Title" data-original_id="title">
             </p>
-
             <p class="et_pb_contact_field et_pb_contact_field_1 et_pb_contact_field_half et_pb_contact_field_last" data-id="organization" data-type="input">
                 <label for="OrganizationName" class="et_pb_contact_form_label">
                     Organization
                 </label>
                 <input type="text" value="" id="insightly_organization" name="OrganizationName" placeholder="Organization" data-original_id="organization">
             </p>
-
             <p class="et_pb_contact_field et_pb_contact_field_2 et_pb_contact_field_half" data-id="firstName" data-type="input">
                 <label for="FirstName" class="et_pb_contact_form_label">
                     First Name
                 </label>
                 <input type="text" value="" required="required" data-required_mark="required" data-field_type="input" id="insightly_firstName" name="FirstName" placeholder="First Name" data-original_id="firstName">
             </p>
-
             <p class="et_pb_contact_field et_pb_contact_field_3 et_pb_contact_field_half et_pb_contact_field_last" data-id="lastName" data-type="input">
                 <label for="LastName" class="et_pb_contact_form_label">
                     Last Name
                 </label>
                 <input type="text" value="" required="required" data-required_mark="required" data-field_type="input" id="insightly_lastName" name="LastName" placeholder="Last Name" data-original_id="lastName">
             </p>
-
             <p class="et_pb_contact_field et_pb_contact_field_4 et_pb_contact_field_half data-id=" email" data-type="email"">
                 <label for=" email" class="et_pb_contact_form_label">
                     Email Address
                 </label>
                 <input type="text" value="" required="required" data-required_mark="required" data-field_type="email" id="insightly_Email" name="email" placeholder="Email Address" data-original_id="email">
             </p>
-
             <p class="et_pb_contact_field et_pb_contact_field_5 et_pb_contact_field_half et_pb_contact_field_last" data-id="phone" data-type="input">
                 <label for="phone" class="et_pb_contact_form_label">
                     Phone
                 </label>
                 <input type="text" value="" required="required" data-required_mark="required" data-field_type="phone" id="insightly_Phone" name="phone" placeholder="Phone" data-original_id="phone">
             </p>
-
             <input type="hidden" name="formId" value="5XJ0MyymqoTFCK/aahJX0g==" />
             <input type="hidden" name="ResponsibleUser" value="1546095" />
             <input type="hidden" name="LeadSource" value="2337010" />
@@ -54,9 +47,7 @@
                     Submit
                 </button>
             </div>
-
         </form>
-
     </div>
 </div>
 <script type="text/javascript">
@@ -64,15 +55,12 @@
     var inner = source.innerHTML;
     document.getElementById('et_pb_contact_form_0').innerHTML = inner;
     source.remove();
-
     function validateEmail(email) {
         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
     }
-
     window.errTxt = document.getElementById("et-pb-contact-message");
     var submitBtn = document.getElementById('scottFormSubmit');
-
     window.processForm = function(e) {
         e.preventDefault();
         var hasError = false;
@@ -107,18 +95,14 @@
             window.errTxt.innerHTML = "<p class='et_pb_text_inner'>There is a problem submitting the information you provided. Please correct the fields that have a red box around them.</p>";
             return false;
         }
-
-
         var formElement = document.getElementById('scottForm');
         var formData = new FormData(formElement);
         var request = new XMLHttpRequest();
-
         // This is a CORS request, so you cannot interact with the response
         // object.
         // If you create an API integration then you can find more information
         // about the submitted information.
         // If you are able to change 
-
         request.onreadystatechange = function(a, b, c) {
             if (this.readyState !== 4) return;
             window.errTxt.innerHTML = "<p class='et_pb_text_inner'>Your information has been submitted. We will be in touch as soon as possible.</p>";
@@ -135,11 +119,9 @@
         request.open("POST", "https://crm.na1.insightly.com/WebToLead/Create");
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         request.send(formData);
-
         window.errTxt.innerHTML = "<p class='et_pb_text_inner'>Submitting your information.</p>";
         return false;
     }
-
     if (submitBtn.addEventListener) {
         submitBtn.addEventListener("click", window.processForm);
     }
