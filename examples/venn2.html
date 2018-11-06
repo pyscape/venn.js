@@ -200,7 +200,7 @@
 	div.selectAll("g")
 		.each(arcLabelFull)
 		.on("mouseover", function(d, i) {
-			if(d.size === 3  && mOverText !== this.textContent) {
+            if(d.size === 3  && mOverText !== this.textContent) {
                 vennSVG.append(svg2);
                 mOverText = this.textContent;
                 mOver = jQuery(d3.event.target);
