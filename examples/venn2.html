@@ -191,15 +191,15 @@
         return d2 <= radius * radius;
     }
 
-	div.selectAll("path")
-		.attr("id", arcAreaId)
-		.style("stroke-opacity", 0)
-		.style("stroke", "#fff")
-		.style("stroke-width", 3)
-		.style("fill", (d,i) => (colors[i]) ? colors[i] : "none");
-	div.selectAll("g")
-		.each(arcLabelFull)
-		.on("mouseover", function(d, i) {
+    div.selectAll("path")
+        .attr("id", arcAreaId)
+        .style("stroke-opacity", 0)
+        .style("stroke", "#fff")
+        .style("stroke-width", 3)
+        .style("fill", (d,i) => (colors[i]) ? colors[i] : "none");
+    div.selectAll("g")
+        .each(arcLabelFull)
+        .on("mouseover", function(d, i) {
             if(d.size === 3  && mOverText !== this.textContent) {
                 vennSVG.append(svg2);
                 mOverText = this.textContent;
