@@ -207,7 +207,7 @@
                 d3.select(this)
                     .attr("opacity", "0")
                     .moveToFront()
-                    .transition().duration(150)
+                    .transition().duration(350)
                     .attr("filter", "url(#dropshadowfilter)")
                     .attr("opacity", "1");
             }
@@ -237,7 +237,7 @@
                 .style("stroke-opacity", 0)
                 .attr("filter", "none")
                 .style("stroke", "none")
-                .transition().duration(150)
+                .transition().duration(250)
                 .attr("opacity", "1");
         });
     const vennSVG = jQuery("#venn svg")
