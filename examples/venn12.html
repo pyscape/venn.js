@@ -1,0 +1,239 @@
+<div id="venn"></div>
+<div id="dropShadowDiv">
+    <svg id="dropShadow" width="500" height="500" opacity="0">
+        <g filter="url(#dropshadowfilter)">
+            <path d="
+                M 166.29151005572368 322.49367880417753
+                m -151.29151005572368 0
+                a 151.29151005572368 151.29151005572368 0 1 0 302.58302011144735 0
+                a 151.29151005572368 151.29151005572368 0 1 0 -302.58302011144735 0" id="arcAreaShadow_0" style="fill-opacity: 1; fill: rgb(0,0,0); stroke-opacity: 1.6875e-09; stroke: rgb(0,0,0); stroke-width: 3;">
+            </path>
+            <path d="
+                M 333.7084899442764 322.49367880417753
+                m -151.29151005572368 0
+                a 151.29151005572368 151.29151005572368 0 1 0 302.58302011144735 0
+                a 151.29151005572368 151.29151005572368 0 1 0 -302.58302011144735 0" id="arcAreaShadow_3" style="fill-opacity: 1; fill: rgb(0,0,0); stroke-opacity: 0; stroke: rgb(0,0,0); stroke-width: 3;">
+            </path>
+            <path d="
+                M 250 177.5063211958225
+                m -151.29151005572368 0
+                a 151.29151005572368 151.29151005572368 0 1 0 302.58302011144735 0
+                a 151.29151005572368 151.29151005572368 0 1 0 -302.58302011144735 0" id="arcAreaShadow_5" style="fill-opacity: 1; fill: rgb(0,0,0); stroke-opacity: 0; stroke:(0,0,0) ; stroke-width: 3;">
+            </path>
+        </g>
+        <defs>
+            <filter id="dropshadowfilter">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="blur"></feGaussianBlur>
+                <feOffset in="blur" dx="5" dy="5" result="offsetBlur"></feOffset>
+                <feMerge>
+                    <feMergeNode in="offsetBlur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
+            </filter>
+        </defs>
+    </svg>
+</div>
+<div id="centerMaskDiv">
+    <svg id="centerMask" width="500" height="500" opacity="0">
+        <defs>
+            <path d="
+                M 99.00590302758381 186.98807706832355
+                A 151.29151005572368 151.29151005572368 0 0 1 317.28560702813985 313.01192293167645
+                A 151.29151005572368 151.29151005572368 0 0 1 99.00590302758381 186.98807706832355"
+                id="centerArea_2" style="fill-opacity: 1; stroke-opacity: 0; stroke: rgb(255, 255, 255); stroke-width: 1; ">
+            </path>
+            <path d="
+                M 250.00000000000003 448.51752466753044
+                A 151.29151005572368 151.29151005572368 0 0 1 250.00000000000003 196.46983294082466
+                A 151.29151005572368 151.29151005572368 0 0 1 250.00000000000003 448.51752466753044"
+                id="centerArea_1" style="fill-opacity: 1; stroke-opacity: 0; stroke: rgb(255, 255, 255); stroke-width: 1;">
+            </path>
+            <path d="
+                M 182.7143929718602 313.01192293167645
+                A 151.29151005572368 151.29151005572368 0 0 1 400.9940969724162 186.98807706832355
+                A 151.29151005572368 151.29151005572368 0 0 1 182.7143929718602 313.01192293167645"
+                id="centerArea_4" style="fill-opacity: 1; stroke-opacity: 0; stroke: rgb(255, 255, 255); stroke-width: 1;">
+            </path>
+            <clipPath id="mask_left">
+                <use xlink:href="#centerArea_1" />
+            </clipPath>
+        </defs>
+        <g>
+            <use xlink:href="#centerArea_2" id="left-center" fill="rgb(136, 108, 45)"/>
+            <use xlink:href="#centerArea_1" id="bottom-center" fill="rgb(82,125,157)"/>
+            <use xlink:href="#centerArea_4" id="right-center"  fill="rgb(113,122,59)"/>
+            <use xlink:href="#centerArea_2" id="center-center" fill="rgb(232,98,45)" clip-path="url(#mask_left)"/>
+        </g>
+    </svg>
+</div>
+<style>
+    .venntooltip {
+        position: absolute;
+        text-align: center;
+        width: 128px;
+        height: 16px;
+        background: #333;
+        color: #ddd;
+        padding: 2px;
+        border: 0px;
+        border-radius: 8px;
+        opacity: 0;
+    }
+    </style>
+    <script src="https://fischerjordan.com/wp-includes/js/jquery/jquery.js?ver=1.12.4"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="http://a73.68e.myftpupload.com/wp-content/uploads/2018/11/venn.js"></script>
+    <script>
+    const scale = 0.9;
+    const svg2 = jQuery("svg#centerMask")
+        .attr("opacity", "1");
+    const chart = venn.VennDiagram()
+                    .width(500)
+                    .height(500);
+    const sets = [
+        {"sets": [0], "label": " ", "size": 3},
+        {"sets": [0,1], "size": 1},
+        {"sets": [0,2], "size": 1},
+        {"sets": [1], "label": " ", "size": 3},
+        {"sets": [1,2], "size": 1},
+        {"sets": [2], "label": " ", "size": 3}
+    ];
+    const labels = ["ANALYTICS", "", "", "TECHNOLOGY", "", "STRATEGY"];
+    const colors = ["#A1A2A7", "#886C2D", "#886C2D", "#72B2E2", "#72B2E2", "#C6972D"];
+    const links = ["/analytics/", "", "", "/technology/", "", "/strategy/"];
+    const arcLetterSpacing = (i) => {
+        switch(i) {
+            case 5: // Strategy
+                return "2px";
+            break;
+            case 3: // Technology
+                return "6px";
+            break;
+            case 0: // Analytics
+                return "6px";
+            break;
+        }
+        return "2px";
+    }
+    const arcAreaRef = (i) => "#" + arcAreaId({},i);
+    const arcAreaId = (d,i) => "arcArea_" + i;
+    const arcSectionRef = (d,i) => "#" + arcSectionId(d,i);
+    const arcSectionId = (d,i) => "arcSection_" + i;
+    const arcLabel = (d,i) => {
+        return labels[i];
+    }
+
+    const arcLabelFull = (d,i,n) => {
+        let arc = "";
+        switch(i) {
+            case 5: // Strategy
+                arc = "M135,190 A10,10 0 0,1 365,190";
+                break;
+            case 3: // Technology
+                arc = "M280,425 A10,10 0 0,0 395,220";
+                break;
+            case 0: // Analytics
+                arc = "M105,220 A10,10 0 0,0 230,425";
+                break;
+            default:
+                return;
+        }
+        let selection = d3.select(n[i]);
+        selection
+            .append("path")
+                .attr("id", arcSectionId(d,i))
+                .attr("d", arc)
+                .style("fill", "none");
+    /*
+                .style("stroke", "red")
+                .style("stroke-dasharray", "5,5");
+    */
+        selection
+            .append("text")
+            .style("text-anchor","middle")
+                .append("textPath")
+                    .attr("xlink:href", arcSectionRef(d,i))
+                    .style("font-size", "2.7em")
+                    .style("font-weight", 400)
+                    .style("fill", "white")
+                    .attr("startOffset", "50%")
+                    .attr("letter-spacing", arcLetterSpacing(i))
+                    .text(arcLabel(d,i));
+    }
+    const div = d3.select("#venn")
+    div.datum(sets).call(chart);
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "venntooltip");
+    const svg = d3.select("#venn svg");
+    const defs = svg.append("defs");
+    d3.selection.prototype.moveToFront = function() {
+        return this.each(function(){
+            this.parentNode.appendChild(this);
+        });
+    };
+
+    div.selectAll("path")
+        .attr("id", arcAreaId)
+        .style("stroke-opacity", 0)
+        .style("stroke", "#fff")
+        .style("stroke-width", 3)
+        .style("fill", (d,i) => (colors[i]) ? colors[i] : "none");
+    div.selectAll("g")
+        .each(arcLabelFull)
+        .on("mouseover", function(d, i) {
+            if(d.size === 3) {
+                let cur = d3.select(this)
+                //svg2
+                    //.attr("opacity", "0");
+                svg3
+                    .attr("opacity", "0.1");
+                d3.select(this)
+                    .moveToFront()
+                    .transition().duration(400)
+                    .attr("filter", "url(#dropshadowfilter)")
+                    .select("textPath")
+                        .attr("filter", "url(#dropshadowfilter)");
+                d3.select("#dropshadowfilter")
+                    .attr("opacity", "0.3")
+                 vennSVG.append(svg2);
+            }
+        })
+        .on("click", function(d, i) {
+            if(typeof links[i] === "string" && links[i] !== ""){
+                window.location = links[i];
+            }
+        })
+        .on("mousemove", function() {
+            // placeholder
+        })
+        .on("mouseout", function(d, i) {
+                svg2
+                    .attr("opacity", "1");
+                svg3
+                    .attr("opacity", ".5");
+            d3.select(this).transition().duration(400).attr("opacity", "1")
+                .attr("filter", "none")
+                .style("stroke", "none")
+                .style("stroke-opacity", 0)
+                .select("textPath")
+                    .attr("filter", "none");
+            d3.select("#dropshadowfilter")
+                .attr("opacity", "0.5");
+ //vennSVG.append(svg2);
+        });
+    const vennSVG = jQuery("#venn svg")
+    vennSVG.append(svg2);
+    const svg3 = jQuery("svg#dropShadow")
+        .attr("opacity", "1");
+    vennSVG.prepend(svg3)
+        .attr("opacity", "1");
+
+    var zoom = d3.zoom().on("zoom", ()=>{});
+    div.selectAll("g")
+        .call(zoom) // here
+        .call(zoom.transform, d3.zoomIdentity.scale(scale))
+    .attr("transform",`translate(20, 5) scale(${scale},${scale})`);
+
+    svg3
+        .attr("opacity", "0.5");
+</script>
